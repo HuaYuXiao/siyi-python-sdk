@@ -874,21 +874,23 @@ class SIYISDK:
             sleep(0.05)
 
     def setYawAngle(self, value):
+        if value > 170:
+            value = 170
+        elif value < -170:
+            value = -170
+
         self._goal_yaw = value
 
     def setPitchAngle(self, value):
-        self._goal_pitch = value
-    def setRotation(self,_yaw,_pitch):
-        if _yaw > 170:
-            _yaw = 170
-        
-        if _yaw < -170:
-            _yaw = -170
-        if _pitch > 20:
-            _pitch = 20
-        if _pitch < -90:
-            _pitch = 90
+        if value > 20:
+            value = 20
+        elif value < -90:
+            value = 90
 
-        self._goal_yaw = _yaw
-        self._goal_pitch = _pitch
+        self._goal_pitch = value
+
+    def setRotation(self,_yaw,_pitch):
+        self.setYawAngle(_yaw)
+        self.setPitchAngle(_pitch)
+
         # self.requestGimbalRot(int(self._goal_yaw), int(self._goal_pitch))
