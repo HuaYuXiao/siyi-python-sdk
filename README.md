@@ -53,9 +53,9 @@ Repo based on this repo: https://github.com/mzahana/siyi_sdk.git
     ```
 
 ## Examples
-* An example of how to auto tracjing with Yolov8 and CV2 tracket to0, see `examples/ml_object_tracker.py`
-* An example of how to auto tracjing with CV2 tracket, see `examples/object_tracker.py`
-* An example of gimbal contol, see `examples/gimbal_control.py`
+* An example of how to auto tracking with Yolov8 and CV2 tracket to0, see `examples/ml_object_tracker.py`
+* An example of how to auto tracking with CV2 tracket, see `examples/object_tracker.py`
+* An example of gimbal control, see `examples/gimbal_control.py`
 
 # Tools
 * To run a nginx-rtmp server from a docker container 
