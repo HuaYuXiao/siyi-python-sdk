@@ -24,9 +24,9 @@ def test():
         exit(1)
     print("Current motion mode: ", cam._motionMode_msg.mode)
 
-    cam.requestCenterGimbal
+    cam.requestCenterGimbal()
 
-    cam.setGimbalRotation(yaw=0,pitch=-85,err_thresh=0.1,kp=0.1)
+    cam.setRotation(_yaw=0, _pitch=-85)
 
     print("Attitude (yaw,pitch,roll) eg:", cam.getAttitude())
 
