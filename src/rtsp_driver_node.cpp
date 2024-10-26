@@ -1,14 +1,4 @@
-#include <thread>
-#include <chrono>
-#include <atomic>
-#include <ros/ros.h>
-#include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
-#include <camera_info_manager/camera_info_manager.h>
-#include <opencv2/opencv.hpp>
 #include <QApplication>
-
 #include "mainwindow.h"
 
 

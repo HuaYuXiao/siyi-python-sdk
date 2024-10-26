@@ -21,13 +21,11 @@ find_package(Qt5 REQUIRED COMPONENTS
 find_package(catkin REQUIRED COMPONENTS
        roscpp
        rospy
-		message_filters
 		tf
 		cv_bridge
        std_msgs
 	   sensor_msgs
-	   geometry_msgs
-	   image_transport
+		nav_msgs
 )
 
 QT5_ADD_RESOURCES(QT_RESOURCES_CPP ${QT_RESOURCES})
@@ -62,6 +60,7 @@ add_executable(rtsp_driver_node
 )
 target_link_libraries(rtsp_driver_node
 		${catkin_LIBRARIES}
+		Eigen3::Eigen
 		${QT_LIBRARIES}
 		Qt5::Core
 		Qt5::Widgets

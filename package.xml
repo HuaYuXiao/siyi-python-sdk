@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>siyi_ros_sdk</name>
-    <version>0.0.0</version>
+    <version>1.2.1</version>
     <description>
-        Python implementation of SIYI SDK for communication with A8 Mini camera
+        SIYI ROS SDK for communication with A8 Mini camera
     </description>
 
     <maintainer email="12010508@mail.sustech.edu.cn">Eason Hua</maintainer>
@@ -16,11 +16,9 @@
     <depend>rospy</depend>
     <depend>std_msgs</depend>
     <depend>sensor_msgs</depend>
-    <depend>geometry_msgs</depend>
-    <depend>image_transport</depend>
+    <depend>nav_msgs</depend>
     <depend>cv_bridge</depend>
     <depend>qt_build</depend>
-    <depend>message_filters</depend>
     <depend>tf</depend>
 
     <export>
