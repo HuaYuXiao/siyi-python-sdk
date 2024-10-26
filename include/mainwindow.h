@@ -27,7 +27,6 @@ private:
     Ui::MainWindow *ui;
     cv::VideoCapture cap;
     QTimer *timer;
-    void displayImage(const cv::Mat &image);
 };
 
 #endif // MAINWINDOW_H

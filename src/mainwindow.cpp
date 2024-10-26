@@ -23,14 +23,8 @@ MainWindow::~MainWindow() {
 void MainWindow::updateFrame() {
     cv::Mat frame;
     if (cap.read(frame)) {
-        displayImage(frame);
+        cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+        QImage img((const uchar*)frame.data, frame.cols, frame.rows, frame.step[0], QImage::Format_RGB888);
+        ui->videoLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->videoLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 }
-
-void MainWindow::displayImage(const cv::Mat &image) {
-    cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
-    QImage img((const uchar*)image.data, image.cols, image.rows, image.step[0], QImage::Format_RGB888);
-//    ui->label->setPixmap(QPixmap::fromImage(img));
-    ui->videoLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->videoLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
-
