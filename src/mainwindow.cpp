@@ -18,6 +18,8 @@ void SIYI_ROS_SDK::updateFrame() {
         QImage img((const uchar*)cv_image.data, cv_image.cols, cv_image.rows, cv_image.step[0], QImage::Format_RGB888);
         ui->videoLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->videoLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
+
+    ros::spinOnce();
 }
 
 // 保存无人机当前里程计信息，包括位置、速度和姿态
@@ -65,12 +67,27 @@ void SIYI_ROS_SDK::saveFrame() {
 
     // Save the frame as an image
     cv::cvtColor(cv_image, cv_image, cv::COLOR_RGB2BGR);
+
+    // Overlay text with position information
+    std::stringstream text_stream;
+    text_stream << fixed << setprecision(2);
+    text_stream << " X: " << odom_pos_[0] <<
+                   " Y: " << odom_pos_[1] <<
+                   " Z: " << odom_pos_[2] <<
+                   " yaw: " << odom_yaw_ * 180 / M_PI;
+    cv::putText(cv_image,
+                text_stream.str(),
+                cv::Point(10, 40),
+                cv::FONT_HERSHEY_SIMPLEX,
+                0.7,
+                cv::Scalar(255, 255, 255),
+                2);
+
     cv::imwrite(fullPath.toStdString(), cv_image);
 }
 
 SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::SIYI_ROS_SDK), timer(new QTimer(this)) {
-    ui->setupUi(this);
 
     // Initialize ROS NodeHandle
     ros::NodeHandle nh("~");
@@ -81,8 +98,11 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     nh.param("image_raw_topic", image_raw_topic, std::string("image_raw"));
     nh.param("camera_info_topic", camera_info_topic, std::string("camera_info"));
 
-    odom_sub = nh.subscribe("/mavros/local_position/odom", 10, &SIYI_ROS_SDK::odometryCallback, this);
+    odom_sub = nh.subscribe<nav_msgs::Odometry>
+            ("/mavros/local_position/odom", 10, &SIYI_ROS_SDK::odometryCallback, this);
     image_pub = nh.advertise<sensor_msgs::Image>(image_raw_topic, 1);
+
+    ROS_INFO("ROS node initialized!");
 
     // Open the RTSP stream
     cap.open(resource);
@@ -90,6 +110,10 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
         QMessageBox::critical(this, "Error", QString("Could not open RTSP stream: %1").arg(QString::fromStdString(resource)));
         return;
     }
+
+    ROS_INFO("RTSP stream connected!");
+
+    ui->setupUi(this);
 
     connect(timer, &QTimer::timeout, this, &SIYI_ROS_SDK::updateFrame);
     connect(ui->saveButton, &QPushButton::clicked, this, &SIYI_ROS_SDK::saveFrame);
