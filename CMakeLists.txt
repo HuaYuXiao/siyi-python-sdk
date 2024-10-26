@@ -57,7 +57,7 @@ target_link_libraries(rtsp_driver_node
 		${catkin_LIBRARIES}
 )
 
-add_executable(qt_test
+add_executable(mainwindow
 		include/mainwindow.h
 		src/mainwindow.ui
 		src/mainwindow.cpp
@@ -66,7 +66,7 @@ add_executable(qt_test
 		${QT_FORMS_HPP}
 		${QT_MOC_HPP}
 )
-target_link_libraries(qt_test
+target_link_libraries(mainwindow
 		${catkin_LIBRARIES}
 		${QT_LIBRARIES}
 		Qt5::Core
