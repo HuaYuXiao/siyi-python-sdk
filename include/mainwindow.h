@@ -1,6 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <thread>
+#include <chrono>
+#include <atomic>
+#include <ros/ros.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <camera_info_manager/camera_info_manager.h>
 #include <opencv2/opencv.hpp>
 #include <QMainWindow>
 #include <QPushButton>
@@ -14,25 +22,30 @@
 
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui { class SIYI_ROS_SDK; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow {
+class SIYI_ROS_SDK : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    SIYI_ROS_SDK(QWidget *parent = nullptr);
+    ~SIYI_ROS_SDK();
 
 private slots:
     void updateFrame();
     void saveFrame();
 
 private:
-    Ui::MainWindow *ui;
     cv::VideoCapture cap;
+    cv::Mat cv_image;  // Store the current frame
+
+    std::string resource, camera_name, camera_frame, image_raw_topic, camera_info_topic;
+
+    ros::Publisher image_pub;
+    
+    Ui::SIYI_ROS_SDK *ui;
     QTimer *timer;
-    cv::Mat currentFrame;  // Store the current frame
 };
 
 #endif // MAINWINDOW_H
