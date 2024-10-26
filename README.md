@@ -1,19 +1,23 @@
 # siyi-python-sdk
-Python implementation of SIYI SDK for communication with ZR10 and A8 Mini cameras
+
+Python implementation of SIYI SDK for communication with A8 Mini cameras
 
 * Camera webpage: http://en.siyi.biz/en/Gimbal%20Camera/ZR10/overview/
 * Documentation: http://en.siyi.biz/en/Gimbal%20Camera/ZR10/download/
 
-Repo based on this repo: https://github.com/mzahana/siyi_sdk.git
+Repo based on this repo: https://github.com/HuaYuXiao/siyi_sdk.git
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/yTnAmtcHlzc/0.jpg)](https://www.youtube.com/watch?v=yTnAmtcHlzc)
 
 
 # Setup
 * Clone this package
-    ```bash
-    git clone git@github.com:Innopolis-UAV-Team/siyi-python-sdk.git
-    ```
+
+```bash
+git clone https://github.com/HuaYuXiao/siyi-ros-sdk.git ~/easondrone_ws/vision/siyi-ros-sdk
+cd ~/easondrone_ws && catkin_make --source vision/siyi-ros-sdk --build vision/siyi-ros-sdk/build
+```
+
 * Connect the camera to PC or onboard computer using the ethernet cable that comes with it. The current implementation uses UDP communication.
 * Power on the camera
 * Do the PC wired network configuration. Make sure to assign a manual IP address to your computer

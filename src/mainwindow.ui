@@ -21,6 +21,14 @@
     <item>
      <widget class="QLabel" name="videoLabel" />
     </item>
+
+    <item>
+     <widget class="QPushButton" name="saveButton">
+      <property name="text">
+       <string>Save Frame</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
 
