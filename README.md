@@ -4,18 +4,34 @@ SIYI ROS SDK for communication with A8 Mini cameras
 
 * Camera webpage: https://siyi.biz/en/index.php?id=22
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/yTnAmtcHlzc/0.jpg)](https://www.youtube.com/watch?v=yTnAmtcHlzc)
+
+## Features
+
+- publish RTSP video stream to ROS topic
+- a panel to display video stream and save frame
+- tools to control gimbal angles
+
 
 ## Setup
 
 ### Requirements
 
-* OpenCV `sudo apt-get install python3-opencv -y`
-* imutils `pip install imutils`
+* OpenCV 
+
+```bash
+sudo apt install python3-opencv -y
+```
+
+* imutils 
+
+```bash
+pip install imutils
+```
+
 * Gstreamer `https://gstreamer.freedesktop.org/documentation/installing/index.html?gi-language=c`
 
 ```bash
-sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio -y
+sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio -y
 ```
 
 - Deepstream (only for Nvidia Jetson boards)
@@ -27,7 +43,7 @@ sudo apt install ffmpeg -y
 pip install ffmpeg-python
 ```
 
-* Clone this package
+* Clone and build this package
 
 ```bash
 git clone https://github.com/HuaYuXiao/siyi-ros-sdk.git ~/easondrone_ws/vision/siyi-ros-sdk
@@ -37,10 +53,11 @@ cd ~/easondrone_ws && catkin_make --source vision/siyi-ros-sdk --build vision/si
 * Connect the camera to PC or onboard computer using the ethernet cable that comes with it. The current implementation uses UDP communication.
 * Power on the camera
 * Do the PC wired network configuration. Make sure to assign a manual IP address to your computer
-  * For example, IP `192.168.1.99`
-  * Gateway `192.168.1.1`
+  * For example, IP `192.168.2.99`
+  * Gateway `192.168.2.1`
   * Netmask `255.255.255.0`
 * Done. 
+
 
 ## Usage
 
@@ -61,29 +78,16 @@ python3 test_gimbal_rotation.py
 
 ### Video Streaming
 
-### Examples
+```bash
+rosrun siyi_ros_sdk rtsp_camera.launch
+```
 
 * An example of how to auto tracking with Yolov8 and CV2 tracket to0, see `examples/ml_object_tracker.py`
 * An example of how to auto tracking with CV2 tracket, see `examples/object_tracker.py`
+
+### Gimbal Control
+
 * An example of gimbal control, see `examples/gimbal_control.py`
-
-## Tools
-
-* To run a nginx-rtmp server from a docker container 
-
-```bash
-docker run -d -p 1935:1935 --name nginx-rtmp tiangolo/nginx-rtmp
-```
-
-[Reference](https://hub.docker.com/r/tiangolo/nginx-rtmp/)
-
-* To play an rtmp stream, you can use the following command in a terminal (you will need to install mpv `sudo apt install mpv`)
-
-```bash
-mpv   --msg-color=yes   --msg-module=yes   --keepaspect=yes   --no-correct-pts   --untimed   --vd-lavc-threads=1   --cache=no   --cache-pause=no   --demuxer-lavf-o-add="fflags=+nobuffer+fastseek+flush_packets"   --demuxer-lavf-probe-info=nostreams   --demuxer-lavf-analyzeduration=0.1   --demuxer-max-bytes=500MiB   --demuxer-readahead-secs=0.1     --interpolation=no   --hr-seek-framedrop=no   --video-sync=display-resample   --temporal-dither=yes   --framedrop=decoder+vo     --deband=no   --dither=no     --hwdec=auto-copy   --hwdec-codecs=all     --video-latency-hacks=yes   --profile=low-latency   --linear-downscaling=no   --correct-downscaling=yes   --sigmoid-upscaling=yes   --scale=ewa_hanning   --scale-radius=3.2383154841662362   --cscale=ewa_lanczossoft   --dscale=mitchell     --fs   --osc=no   --osd-duration=450   --border=no   --no-pause   --no-resume-playback   --keep-open=no   --network-timeout=0 --stream-lavf-o=reconnect_streamed=1   rtmp://127.0.0.1/live/webcam
-```
-
-**OR you can use VLC, but you may notice high latency!**
 
 ## Acknowledgement
 
