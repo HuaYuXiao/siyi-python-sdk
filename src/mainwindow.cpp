@@ -53,16 +53,10 @@ void SIYI_ROS_SDK::saveFrame() {
         return;
     }
 
-    // Ensure the directory exists
-    QDir dir(QDir::homePath() + "/easondrone_ws/vision/siyi-ros-sdk/img/");
-    if (!dir.exists()) {
-        dir.mkpath(".");  // Create the directory if it does not exist
-    }
-
     // Generate a filename based on the current date and time
     QString currentTime = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
     QString file = currentTime + ".png";
-    QFileInfo fi(dir, file);
+    QFileInfo fi(save_path_Q, file);
     QString fullPath = fi.absoluteFilePath();
 
     // Save the frame as an image
@@ -84,6 +78,8 @@ void SIYI_ROS_SDK::saveFrame() {
                 2);
 
     cv::imwrite(fullPath.toStdString(), cv_image);
+
+    ROS_INFO("Frame saved to %s", fullPath.toStdString().c_str());
 }
 
 SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
@@ -92,11 +88,12 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     // Initialize ROS NodeHandle
     ros::NodeHandle nh("~");
 
-    nh.param("video_resource", video_resource, std::string("rtsp://192.168.2.222:8554/main.264"));
+    nh.param("video_resource", video_resource, std::string(""));
     nh.param("camera_name", camera_name, std::string("siyi_a8_mini"));
     nh.param("camera_frame", camera_frame, std::string("siyi_camera_link"));
     nh.param("image_raw_topic", image_raw_topic, std::string("image_raw"));
     nh.param("camera_info_topic", camera_info_topic, std::string("camera_info"));
+    nh.param("save_path", save_path, std::string("/.siyi-cache/"));
 
     odom_sub = nh.subscribe<nav_msgs::Odometry>
             ("/mavros/local_position/odom", 10, &SIYI_ROS_SDK::odometryCallback, this);
@@ -112,6 +109,13 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     }
 
     ROS_INFO("video stream connected!");
+
+    // Ensure the directory exists
+    save_path_Q = QDir::homePath() + save_path.c_str();
+    // Create the directory if it does not exist
+    if (!save_path_Q.exists()) {
+        save_path_Q.mkpath(".");
+    }
 
     ui->setupUi(this);
 

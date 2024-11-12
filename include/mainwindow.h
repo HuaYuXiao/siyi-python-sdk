@@ -49,7 +49,10 @@ private:
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;
     double odom_roll_, odom_pitch_, odom_yaw_;
     ros::Subscriber odom_sub;
-    
+
+    std::string save_path;
+    QDir save_path_Q;
+
     Ui::SIYI_ROS_SDK *ui;
     QTimer *timer;
 };

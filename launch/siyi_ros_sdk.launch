@@ -3,6 +3,7 @@
     <arg name="camera_frame" default="siyi_camera_link" />
     <arg name="image_raw_topic" default="image_raw" />
     <arg name="camera_info_topic" default="camera_info" />
+    <arg name="save_path" default="/easondrone_ws/vision/siyi-ros-sdk/img/" />
 
     <!-- NOTE: only one of these two params can be set to true! -->
     <arg name="if_hdmi" default="true"/>
@@ -13,12 +14,13 @@
             <!-- HDMI camera info -->
             <arg name="hdmi_device" default="/dev/video0" />
 
-            <node pkg="siyi_ros_sdk" type="rtsp_driver_node" name="rtsp_driver_node" output="screen">
+            <node pkg="siyi_ros_sdk" type="siyi_ros_sdk" name="siyi_ros_sdk" output="screen">
                 <param name="video_resource" value="$(arg hdmi_device)" />
                 <param name="camera_name" value="$(arg camera_name)" />
                 <param name="camera_frame" value="$(arg camera_frame)" />
                 <param name="image_raw_topic" value="$(arg image_raw_topic)" />
                 <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+                <param name="save_path" value="$(arg save_path)" />
             </node>
         </group>
 
@@ -39,6 +41,7 @@
                 <param name="camera_frame" value="$(arg camera_frame)" />
                 <param name="image_raw_topic" value="$(arg image_raw_topic)" />
                 <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+                <param name="save_path" value="$(arg save_path)" />
             </node>
         </group>
     </group>
