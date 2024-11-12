@@ -92,8 +92,8 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     // Initialize ROS NodeHandle
     ros::NodeHandle nh("~");
 
-    nh.param("rtsp_resource", resource, std::string("rtsp://192.168.1.222:8554/main.264"));
-    nh.param("camera_name", camera_name, std::string("siyi_camera"));
+    nh.param("video_resource", video_resource, std::string("rtsp://192.168.2.222:8554/main.264"));
+    nh.param("camera_name", camera_name, std::string("siyi_a8_mini"));
     nh.param("camera_frame", camera_frame, std::string("siyi_camera_link"));
     nh.param("image_raw_topic", image_raw_topic, std::string("image_raw"));
     nh.param("camera_info_topic", camera_info_topic, std::string("camera_info"));
@@ -104,19 +104,20 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
 
     ROS_INFO("ROS node initialized!");
 
-    // Open the RTSP stream
-    cap.open(resource);
+    // Open video stream
+    cap.open(video_resource);
     if (!cap.isOpened()) {
-        QMessageBox::critical(this, "Error", QString("Could not open RTSP stream: %1").arg(QString::fromStdString(resource)));
+        QMessageBox::critical(this, "Error", QString("Could not open video stream: %1").arg(QString::fromStdString(video_resource)));
         return;
     }
 
-    ROS_INFO("RTSP stream connected!");
+    ROS_INFO("video stream connected!");
 
     ui->setupUi(this);
 
     connect(timer, &QTimer::timeout, this, &SIYI_ROS_SDK::updateFrame);
     connect(ui->saveButton, &QPushButton::clicked, this, &SIYI_ROS_SDK::saveFrame);
 
-    timer->start(30); // Update every 30 ms
+    // Update every 30 ms
+    timer->start(30);
 }

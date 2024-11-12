@@ -3,11 +3,11 @@
 
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "rtsp_driver_node");
+    ros::init(argc, argv, "siyi_ros_sdk");
 
     QApplication a(argc, argv);
-    SIYI_ROS_SDK siyi_manager;
-    siyi_manager.show();
+    SIYI_ROS_SDK siyi_ros_sdk;
+    siyi_ros_sdk.show();
 
     return a.exec();
 }

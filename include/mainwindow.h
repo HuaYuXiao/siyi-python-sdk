@@ -43,7 +43,7 @@ private slots:
 private:
     cv::VideoCapture cap;
     cv::Mat cv_image;  // Store the current frame
-    std::string resource, camera_name, camera_frame, image_raw_topic, camera_info_topic;
+    std::string video_resource, camera_name, camera_frame, image_raw_topic, camera_info_topic;
     ros::Publisher image_pub;
 
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;

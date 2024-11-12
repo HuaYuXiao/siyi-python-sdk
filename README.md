@@ -2,13 +2,19 @@
 
 SIYI ROS SDK for communication with A8 Mini cameras
 
-* Camera webpage: https://siyi.biz/en/index.php?id=22
+![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FHuaYuXiao%2Fsiyi-ros-sdk.json%3Fcolor%3Dpink)
+![Static Badge](https://img.shields.io/badge/ROS-noetic-22314E?logo=ros)
+![Static Badge](https://img.shields.io/badge/C%2B%2B-14-00599C?logo=cplusplus)
+![Static Badge](https://img.shields.io/badge/Python-3.8-3776AB?logo=python)
+![Static Badge](https://img.shields.io/badge/Ubuntu-20.04.6-E95420?logo=ubuntu)
+
+Camera webpage: https://siyi.biz/en/index.php?id=22
 
 
 ## Features
 
-- publish RTSP video stream to ROS topic
-- a panel to display video stream and save frame
+- publish video stream to ROS topic, support either **RTSP** or **HDMI**
+- a panel to display video stream and save frame **with Odometry info**
 - tools to control gimbal angles
 
 
@@ -69,17 +75,10 @@ cd ~/easondrone_ws && catkin_make --source vision/siyi-ros-sdk --build vision/si
 from siyi_sdk import SIYISDK
 ```
 
-* Example: To run the `test_gimbal_rotation.py` run,
-
-```bash
-cd siyi_sdk/tests
-python3 test_gimbal_rotation.py
-```
-
 ### Video Streaming
 
 ```bash
-rosrun siyi_ros_sdk rtsp_camera.launch
+roslaunch siyi_ros_sdk siyi_ros_sdk.launch
 ```
 
 * An example of how to auto tracking with Yolov8 and CV2 tracket to0, see `examples/ml_object_tracker.py`
@@ -88,6 +87,13 @@ rosrun siyi_ros_sdk rtsp_camera.launch
 ### Gimbal Control
 
 * An example of gimbal control, see `examples/gimbal_control.py`
+
+* Example: To run the `test_gimbal_rotation.py` run,
+
+```bash
+cd siyi_sdk/tests
+python3 test_gimbal_rotation.py
+```
 
 ## Acknowledgement
 

@@ -49,16 +49,16 @@ include_directories(
 		${Qt5Widgets_INCLUDE_DIRS}
 )
 
-add_executable(rtsp_driver_node
+add_executable(siyi_ros_sdk
 		include/mainwindow.h
 		src/mainwindow.ui
 		src/mainwindow.cpp
-		src/rtsp_driver_node.cpp
+		src/main_node.cpp
 		${QT_RESOURCES_CPP}
 		${QT_FORMS_HPP}
 		${QT_MOC_HPP}
 )
-target_link_libraries(rtsp_driver_node
+target_link_libraries(siyi_ros_sdk
 		${catkin_LIBRARIES}
 		Eigen3::Eigen
 		${QT_LIBRARIES}
