@@ -13,12 +13,23 @@ Camera webpage: https://siyi.biz/en/index.php?id=22
 
 ## Features
 
-- publish video stream to ROS topic, support either **RTSP** or **HDMI**
-- a panel to display video stream and save frame **with Odometry info**
+- publish video stream to **ROS topic**, either **RTSP** or **HDMI** supported
+- a panel to display video stream, and save frame **with Odometry info**
+- combined with **YOLOv5** if launched
 - tools to control gimbal angles
 
 
 ## Setup
+
+If stream video with **HDMI**, nothing else to configure.
+
+If stream video with **RTSP**,
+
+* Connect the camera to PC or onboard computer using the ethernet cable that comes with it. The current implementation uses UDP communication.
+* Do the PC wired network configuration. Make sure to assign a manual IP address to your computer
+  * For example, IP `192.168.2.99`
+  * Gateway `192.168.2.1`
+  * Netmask `255.255.255.0`
 
 ### Requirements
 
@@ -56,14 +67,6 @@ git clone https://github.com/HuaYuXiao/siyi-ros-sdk.git ~/easondrone_ws/vision/s
 cd ~/easondrone_ws && catkin_make --source vision/siyi-ros-sdk --build vision/siyi-ros-sdk/build
 ```
 
-* Connect the camera to PC or onboard computer using the ethernet cable that comes with it. The current implementation uses UDP communication.
-* Power on the camera
-* Do the PC wired network configuration. Make sure to assign a manual IP address to your computer
-  * For example, IP `192.168.2.99`
-  * Gateway `192.168.2.1`
-  * Netmask `255.255.255.0`
-* Done. 
-
 
 ## Usage
 
@@ -80,6 +83,14 @@ from siyi_sdk import SIYISDK
 ```bash
 roslaunch siyi_ros_sdk siyi_ros_sdk.launch
 ```
+
+### YOLO detection
+
+```bash
+roslaunch siyi_ros_sdk yolov5.launch
+```
+
+The video will automatically switch to YOLO detection result once YOLO topics are available.
 
 * An example of how to auto tracking with Yolov8 and CV2 tracket to0, see `examples/ml_object_tracker.py`
 * An example of how to auto tracking with CV2 tracket, see `examples/object_tracker.py`

@@ -6,20 +6,48 @@ using namespace std;
 
 
 void SIYI_ROS_SDK::updateFrame() {
-    if (cap.read(cv_image)) {
+    if (cap.read(cv_image_raw)) {
         if(ros::ok()){
-            sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", cv_image).toImageMsg();
+            sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", cv_image_raw).toImageMsg();
             image_msg->header.frame_id = camera_frame;
             image_msg->header.stamp = ros::Time::now();
             image_pub.publish(image_msg);
         }
 
-        cv::cvtColor(cv_image, cv_image, cv::COLOR_BGR2RGB);
-        QImage img((const uchar*)cv_image.data, cv_image.cols, cv_image.rows, cv_image.step[0], QImage::Format_RGB888);
-        ui->videoLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->videoLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        cv::cvtColor(cv_image_raw, cv_image_raw, cv::COLOR_BGR2RGB);
+
+        cv::Mat image_display;
+
+        if(cv_yolo_image.empty()){
+            image_display = cv_image_raw;
+        }
+        else{
+            image_display = cv_yolo_image;
+        }
+
+        QImage img((const uchar*)image_display.data,
+                   image_display.cols,
+                   image_display.rows,
+                   image_display.step[0],
+                   QImage::Format_RGB888);
+        ui->videoLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->videoLabel->size(),
+                                                                 Qt::KeepAspectRatio,
+                                                                 Qt::SmoothTransformation));
     }
 
     ros::spinOnce();
+}
+
+void SIYI_ROS_SDK::yoloImageCallback(const sensor_msgs::Image::ConstPtr& msg) {
+    // Convert the ROS image message to OpenCV Mat
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+
+    // Now you have the image as a cv::Mat object
+    cv_yolo_image = cv_ptr->image;
+}
+
+void SIYI_ROS_SDK::yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr& msg) {
+    return;
 }
 
 // 保存无人机当前里程计信息，包括位置、速度和姿态
@@ -48,7 +76,7 @@ void SIYI_ROS_SDK::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
 
 // Store the current frame
 void SIYI_ROS_SDK::saveFrame() {
-    if (cv_image.empty()) {
+    if (cv_image_raw.empty()) {
         QMessageBox::warning(this, "Error", "No frame available to save.");
         return;
     }
@@ -60,7 +88,7 @@ void SIYI_ROS_SDK::saveFrame() {
     QString fullPath = fi.absoluteFilePath();
 
     // Save the frame as an image
-    cv::cvtColor(cv_image, cv_image, cv::COLOR_RGB2BGR);
+    cv::cvtColor(cv_image_raw, cv_image_raw, cv::COLOR_RGB2BGR);
 
     // Overlay text with position information
     std::stringstream text_stream;
@@ -69,7 +97,7 @@ void SIYI_ROS_SDK::saveFrame() {
                    " Y: " << odom_pos_[1] <<
                    " Z: " << odom_pos_[2] <<
                    " yaw: " << odom_yaw_ * 180 / M_PI;
-    cv::putText(cv_image,
+    cv::putText(cv_image_raw,
                 text_stream.str(),
                 cv::Point(10, 40),
                 cv::FONT_HERSHEY_SIMPLEX,
@@ -77,10 +105,11 @@ void SIYI_ROS_SDK::saveFrame() {
                 cv::Scalar(255, 255, 255),
                 2);
 
-    cv::imwrite(fullPath.toStdString(), cv_image);
+    cv::imwrite(fullPath.toStdString(), cv_image_raw);
 
     ROS_INFO("Frame saved to %s", fullPath.toStdString().c_str());
 }
+
 
 SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::SIYI_ROS_SDK), timer(new QTimer(this)) {
@@ -93,11 +122,19 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     nh.param("camera_frame", camera_frame, std::string("siyi_camera_link"));
     nh.param("image_raw_topic", image_raw_topic, std::string("image_raw"));
     nh.param("camera_info_topic", camera_info_topic, std::string("camera_info"));
+    nh.param("image_yolo_topic", image_yolo_topic, std::string("/yolov5/image_out"));
+    nh.param("yolo_box_topic", yolo_box_topic, std::string("/yolov5/detections"));
     nh.param("save_path", save_path, std::string("/.siyi-cache/"));
 
+    yolo_image_sub = nh.subscribe<sensor_msgs::Image>
+            (image_yolo_topic, 30, &SIYI_ROS_SDK::yoloImageCallback, this);
+    yolo_box_sub = nh.subscribe<detection_msgs::BoundingBoxes>
+            (yolo_box_topic, 30, &SIYI_ROS_SDK::yoloBoxCallback, this);
     odom_sub = nh.subscribe<nav_msgs::Odometry>
-            ("/mavros/local_position/odom", 10, &SIYI_ROS_SDK::odometryCallback, this);
-    image_pub = nh.advertise<sensor_msgs::Image>(image_raw_topic, 1);
+            ("/mavros/local_position/odom", 30, &SIYI_ROS_SDK::odometryCallback, this);
+
+    image_pub = nh.advertise<sensor_msgs::Image>
+            (image_raw_topic, 1);
 
     ROS_INFO("ROS node initialized!");
 

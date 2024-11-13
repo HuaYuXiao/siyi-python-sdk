@@ -11,6 +11,8 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <camera_info_manager/camera_info_manager.h>
 #include <opencv2/opencv.hpp>
+#include <detection_msgs/BoundingBox.h>
+#include <detection_msgs/BoundingBoxes.h>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QMessageBox>
@@ -37,14 +39,21 @@ public:
 
 private slots:
     void updateFrame();
-    void odometryCallback(const nav_msgs::Odometry::ConstPtr& msg);
+    void yoloImageCallback(const sensor_msgs::Image::ConstPtr&);
+    void yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr&);
+    void odometryCallback(const nav_msgs::Odometry::ConstPtr&);
     void saveFrame();
 
 private:
     cv::VideoCapture cap;
-    cv::Mat cv_image;  // Store the current frame
+    // Store the current frame
+    cv::Mat cv_image_raw;
     std::string video_resource, camera_name, camera_frame, image_raw_topic, camera_info_topic;
     ros::Publisher image_pub;
+
+    ros::Subscriber yolo_image_sub, yolo_box_sub;
+    cv::Mat cv_yolo_image;
+    std::string image_yolo_topic, yolo_box_topic;
 
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;
     double odom_roll_, odom_pitch_, odom_yaw_;

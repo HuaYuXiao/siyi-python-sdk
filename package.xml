@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>siyi_ros_sdk</name>
-    <version>1.2.2</version>
+    <version>1.3.0</version>
     <description>
         SIYI ROS SDK for communication with A8 Mini camera
     </description>
@@ -18,6 +18,8 @@
     <depend>sensor_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cv_bridge</depend>
+    <depend>yolov5_ros</depend>
+    <depend>detection_msgs</depend>
     <depend>qt_build</depend>
     <depend>tf</depend>
 

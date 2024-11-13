@@ -25,6 +25,8 @@ find_package(catkin REQUIRED COMPONENTS
 		cv_bridge
        std_msgs
 	   sensor_msgs
+		yolov5_ros
+		detection_msgs
 		nav_msgs
 )
 

@@ -3,6 +3,8 @@
     <arg name="camera_frame" default="siyi_camera_link" />
     <arg name="image_raw_topic" default="/$(arg camera_name)/image_raw" />
     <arg name="camera_info_topic" default="camera_info" />
+    <arg name="image_yolo_topic" default="/yolov5/image_out" />
+    <arg name="yolo_box_topic" default="/yolov5/detections" />
     <arg name="save_path" default="/easondrone_ws/vision/siyi-ros-sdk/img/" />
 
     <!-- NOTE: only one of these two params can be set to true! -->
@@ -19,6 +21,8 @@
             <param name="camera_frame" value="$(arg camera_frame)" />
             <param name="image_raw_topic" value="$(arg image_raw_topic)" />
             <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+            <param name="image_yolo_topic" value="$(arg image_yolo_topic)" />
+            <param name="yolo_box_topic" value="$(arg yolo_box_topic)" />
             <param name="save_path" value="$(arg save_path)" />
         </node>
     </group>
@@ -40,6 +44,8 @@
             <param name="camera_frame" value="$(arg camera_frame)" />
             <param name="image_raw_topic" value="$(arg image_raw_topic)" />
             <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+            <param name="image_yolo_topic" value="$(arg image_yolo_topic)" />
+            <param name="yolo_box_topic" value="$(arg yolo_box_topic)" />
             <param name="save_path" value="$(arg save_path)" />
         </node>
     </group>
