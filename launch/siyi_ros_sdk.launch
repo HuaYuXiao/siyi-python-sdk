@@ -1,7 +1,7 @@
 <launch>
     <arg name="camera_name" default="siyi_a8_mini" />
     <arg name="camera_frame" default="siyi_camera_link" />
-    <arg name="image_raw_topic" default="image_raw" />
+    <arg name="image_raw_topic" default="/$(arg camera_name)/image_raw" />
     <arg name="camera_info_topic" default="camera_info" />
     <arg name="save_path" default="/easondrone_ws/vision/siyi-ros-sdk/img/" />
 
@@ -9,40 +9,38 @@
     <arg name="if_hdmi" default="true"/>
     <arg name="if_rtsp" default="false"/>
 
-    <group ns="$(arg camera_name)">
-        <group if="$(arg if_hdmi)">
-            <!-- HDMI camera info -->
-            <arg name="hdmi_device" default="/dev/video0" />
+    <group if="$(arg if_hdmi)">
+        <!-- HDMI camera info -->
+        <arg name="hdmi_device" default="/dev/video0" />
 
-            <node pkg="siyi_ros_sdk" type="siyi_ros_sdk" name="siyi_ros_sdk" output="screen">
-                <param name="video_resource" value="$(arg hdmi_device)" />
-                <param name="camera_name" value="$(arg camera_name)" />
-                <param name="camera_frame" value="$(arg camera_frame)" />
-                <param name="image_raw_topic" value="$(arg image_raw_topic)" />
-                <param name="camera_info_topic" value="$(arg camera_info_topic)" />
-                <param name="save_path" value="$(arg save_path)" />
-            </node>
-        </group>
+        <node pkg="siyi_ros_sdk" type="siyi_ros_sdk" name="siyi_ros_sdk" output="screen">
+            <param name="video_resource" value="$(arg hdmi_device)" />
+            <param name="camera_name" value="$(arg camera_name)" />
+            <param name="camera_frame" value="$(arg camera_frame)" />
+            <param name="image_raw_topic" value="$(arg image_raw_topic)" />
+            <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+            <param name="save_path" value="$(arg save_path)" />
+        </node>
+    </group>
 
-        <group if="$(arg if_rtsp)">
-            <arg name="hostname" default="192.168.2.222" />
-            <!-- username for the rtsp camera -->
-            <arg name="username" default="admin" />
-            <!-- password for the rtsp camera -->
-            <arg name="password" default=" " />
-            <!-- port of the rtsp camera -->
-            <arg name="port" default="8554" />
-            <!-- name of the video stream published by the rtsp camera -->
-            <arg name="stream" default="main.264" />
+    <group if="$(arg if_rtsp)">
+        <arg name="hostname" default="192.168.2.222" />
+        <!-- username for the rtsp camera -->
+        <arg name="username" default="admin" />
+        <!-- password for the rtsp camera -->
+        <arg name="password" default=" " />
+        <!-- port of the rtsp camera -->
+        <arg name="port" default="8554" />
+        <!-- name of the video stream published by the rtsp camera -->
+        <arg name="stream" default="main.264" />
 
-            <node pkg="siyi_ros_sdk" type="siyi_ros_sdk" name="siyi_ros_sdk" output="screen">
-                <param name="video_resource" value="rtsp://$(arg hostname):$(arg port)/$(arg stream)" />
-                <param name="camera_name" value="$(arg camera_name)" />
-                <param name="camera_frame" value="$(arg camera_frame)" />
-                <param name="image_raw_topic" value="$(arg image_raw_topic)" />
-                <param name="camera_info_topic" value="$(arg camera_info_topic)" />
-                <param name="save_path" value="$(arg save_path)" />
-            </node>
-        </group>
+        <node pkg="siyi_ros_sdk" type="siyi_ros_sdk" name="siyi_ros_sdk" output="screen">
+            <param name="video_resource" value="rtsp://$(arg hostname):$(arg port)/$(arg stream)" />
+            <param name="camera_name" value="$(arg camera_name)" />
+            <param name="camera_frame" value="$(arg camera_frame)" />
+            <param name="image_raw_topic" value="$(arg image_raw_topic)" />
+            <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+            <param name="save_path" value="$(arg save_path)" />
+        </node>
     </group>
 </launch>
