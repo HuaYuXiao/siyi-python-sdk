@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 using namespace std;
 
 
@@ -39,14 +38,29 @@ void SIYI_ROS_SDK::updateFrame() {
 }
 
 void SIYI_ROS_SDK::yoloImageCallback(const sensor_msgs::Image::ConstPtr& msg) {
-    // Convert the ROS image message to OpenCV Mat
-    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+    if(yolo_boxes.empty()){
+        cv_yolo_image = cv::Mat();
 
-    // Now you have the image as a cv::Mat object
-    cv_yolo_image = cv_ptr->image;
+        return;
+    }
+    else{
+        // Convert the ROS image message to OpenCV Mat
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+
+        // Now you have the image as a cv::Mat object
+        cv_yolo_image = cv_ptr->image;
+    }
 }
 
 void SIYI_ROS_SDK::yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr& msg) {
+    // Clear the previous bounding boxes
+    yolo_boxes.clear();
+
+    // Iterate through the received bounding boxes and add them to the vector
+    for (const auto& box : msg->bounding_boxes) {
+        yolo_boxes.push_back(box);
+    }
+
     return;
 }
 
@@ -127,14 +141,14 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     nh.param("save_path", save_path, std::string("/.siyi-cache/"));
 
     yolo_image_sub = nh.subscribe<sensor_msgs::Image>
-            (image_yolo_topic, 30, &SIYI_ROS_SDK::yoloImageCallback, this);
+            (image_yolo_topic, 10, &SIYI_ROS_SDK::yoloImageCallback, this);
     yolo_box_sub = nh.subscribe<detection_msgs::BoundingBoxes>
-            (yolo_box_topic, 30, &SIYI_ROS_SDK::yoloBoxCallback, this);
+            (yolo_box_topic, 10, &SIYI_ROS_SDK::yoloBoxCallback, this);
     odom_sub = nh.subscribe<nav_msgs::Odometry>
             ("/mavros/local_position/odom", 30, &SIYI_ROS_SDK::odometryCallback, this);
 
     image_pub = nh.advertise<sensor_msgs::Image>
-            (image_raw_topic, 1);
+            (image_raw_topic, 10);
 
     ROS_INFO("ROS node initialized!");
 

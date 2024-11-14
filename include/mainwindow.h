@@ -4,8 +4,10 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
+#include <vector>
 #include <Eigen/Eigen>
 #include <ros/ros.h>
+
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
@@ -13,6 +15,7 @@
 #include <opencv2/opencv.hpp>
 #include <detection_msgs/BoundingBox.h>
 #include <detection_msgs/BoundingBoxes.h>
+
 #include <QMainWindow>
 #include <QPushButton>
 #include <QMessageBox>
@@ -22,6 +25,7 @@
 #include <QImage>
 #include <QDateTime>
 #include <QDir>
+
 #include <tf/tf.h>
 #include <nav_msgs/Odometry.h>
 
@@ -39,9 +43,6 @@ public:
 
 private slots:
     void updateFrame();
-    void yoloImageCallback(const sensor_msgs::Image::ConstPtr&);
-    void yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr&);
-    void odometryCallback(const nav_msgs::Odometry::ConstPtr&);
     void saveFrame();
 
 private:
@@ -51,9 +52,12 @@ private:
     std::string video_resource, camera_name, camera_frame, image_raw_topic, camera_info_topic;
     ros::Publisher image_pub;
 
+    std::string image_yolo_topic, yolo_box_topic;
     ros::Subscriber yolo_image_sub, yolo_box_sub;
     cv::Mat cv_yolo_image;
-    std::string image_yolo_topic, yolo_box_topic;
+    // NOTE: avoid using "detection_msgs::BoundingBox yolo_boxes[]"
+    // because it is not allowed to define an array with flexible size but not at the end of the class.
+    std::vector<detection_msgs::BoundingBox> yolo_boxes;
 
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;
     double odom_roll_, odom_pitch_, odom_yaw_;
@@ -64,6 +68,10 @@ private:
 
     Ui::SIYI_ROS_SDK *ui;
     QTimer *timer;
+
+    void yoloImageCallback(const sensor_msgs::Image::ConstPtr&);
+    void yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr&);
+    void odometryCallback(const nav_msgs::Odometry::ConstPtr&);
 };
 
 #endif // MAINWINDOW_H
