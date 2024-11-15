@@ -26,9 +26,9 @@ void SIYI_ROS_SDK::updateFrame() {
                                image_display_mat.step[0],
                                QImage::Format_RGB888);
 
-        ui->videoLabel->setPixmap(QPixmap::fromImage(img_display_q).scaled(ui->videoLabel->size(),
-                                                                           Qt::KeepAspectRatio,
-                                                                           Qt::SmoothTransformation));
+        ui->videoPannel->setPixmap(QPixmap::fromImage(img_display_q).scaled(ui->videoPannel->size(),
+                                                                            Qt::KeepAspectRatio,
+                                                                            Qt::SmoothTransformation));
     }
 
     ros::spinOnce();
