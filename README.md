@@ -3,10 +3,12 @@
 SIYI ROS SDK for communication with A8 Mini cameras
 
 ![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FHuaYuXiao%2Fsiyi-ros-sdk.json%3Fcolor%3Dpink)
-![Static Badge](https://img.shields.io/badge/ROS-noetic-22314E?logo=ros)
-![Static Badge](https://img.shields.io/badge/C%2B%2B-14-00599C?logo=cplusplus)
-![Static Badge](https://img.shields.io/badge/Python-3.8-3776AB?logo=python)
-![Static Badge](https://img.shields.io/badge/Ubuntu-20.04.6-E95420?logo=ubuntu)
+![ros](https://img.shields.io/badge/ROS-noetic-22314E?logo=ros)
+![ros](https://img.shields.io/badge/OpenCV-4.2.0-5C3EE8?logo=opencv)
+![qt](https://img.shields.io/badge/Qt-5.12.8-41CD52?logo=qt)
+![cplusplus](https://img.shields.io/badge/C%2B%2B-14-00599C?logo=cplusplus)
+![python](https://img.shields.io/badge/Python-3.8.10-3776AB?logo=python)
+![ubuntu](https://img.shields.io/badge/Ubuntu-20.04.6-E95420?logo=ubuntu)
 
 Camera webpage: https://siyi.biz/en/index.php?id=22
 
@@ -33,32 +35,11 @@ If stream video with **RTSP**,
 
 ### Requirements
 
-* OpenCV 
+- `OpenCV`: https://opencv.org/get-started/
+- `ROS`: https://wiki.ros.org/noetic/Installation/Ubuntu
+- `Qt5`: https://wiki.qt.io/Install_Qt_5_on_Ubuntu
 
-```bash
-sudo apt install python3-opencv -y
-```
-
-* imutils 
-
-```bash
-pip install imutils
-```
-
-* Gstreamer `https://gstreamer.freedesktop.org/documentation/installing/index.html?gi-language=c`
-
-```bash
-sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio -y
-```
-
-- Deepstream (only for Nvidia Jetson boards)
-  (https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_Quickstart.html#jetson-setup)
-- For RTMP streaming
-
-```bash
-sudo apt install ffmpeg -y
-pip install ffmpeg-python
-```
+### Installation
 
 * Clone and build this package
 

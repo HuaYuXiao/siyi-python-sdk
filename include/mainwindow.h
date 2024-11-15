@@ -16,6 +16,9 @@
 #include <detection_msgs/BoundingBox.h>
 #include <detection_msgs/BoundingBoxes.h>
 
+#include <tf/tf.h>
+#include <nav_msgs/Odometry.h>
+
 #include <QMainWindow>
 #include <QPushButton>
 #include <QMessageBox>
@@ -25,9 +28,6 @@
 #include <QImage>
 #include <QDateTime>
 #include <QDir>
-
-#include <tf/tf.h>
-#include <nav_msgs/Odometry.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -46,18 +46,22 @@ private slots:
     void saveFrame();
 
 private:
+    std::string video_resource;
     cv::VideoCapture cap;
     // Store the current frame
-    cv::Mat cv_image_raw;
-    std::string video_resource, camera_name, camera_frame, image_raw_topic, camera_info_topic;
-    ros::Publisher image_pub;
+    cv::Mat image_raw_mat;
+    sensor_msgs::ImagePtr image_raw_msg;
+    std::string camera_name, camera_frame, image_raw_topic, camera_info_topic;
+    ros::Publisher image_raw_pub;
 
     std::string image_yolo_topic, yolo_box_topic;
-    ros::Subscriber yolo_image_sub, yolo_box_sub;
-    cv::Mat cv_yolo_image;
+    ros::Subscriber image_yolo_sub, yolo_box_sub;
+    cv::Mat image_yolo_mat;
     // NOTE: avoid using "detection_msgs::BoundingBox yolo_boxes[]"
     // because it is not allowed to define an array with flexible size but not at the end of the class.
     std::vector<detection_msgs::BoundingBox> yolo_boxes;
+
+    QImage img_display_q;
 
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;
     double odom_roll_, odom_pitch_, odom_yaw_;

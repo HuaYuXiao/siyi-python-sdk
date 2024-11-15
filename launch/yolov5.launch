@@ -4,7 +4,7 @@
     <arg name="data" default="$(find yolov5_ros)/config/cuadc.yaml" />
     <arg name="confidence_threshold" default="0.75" />
     <arg name="iou_threshold" default="0.45" />
-    <arg name="maximum_detections" default="1000" />
+    <arg name="maximum_detections" default="100" />
     <arg name="device" default="cpu" />
     <arg name="agnostic_nms" default="true" />
     <arg name="line_thickness" default="3" />
@@ -26,8 +26,7 @@
     <arg name="publish_image" default="true" />
     <arg name="output_image_topic" default="/yolov5/image_out" />
 
-
-    <node pkg="yolov5_ros" name="detect" type="detect.py" output="screen">
+    <node pkg="yolov5_ros" name="yolov5_ros" type="detect.py" output="screen">
         <param name="weights" value="$(arg weights)" />
         <param name="data" value="$(arg data)" />
         <param name="confidence_threshold" value="$(arg confidence_threshold)" />
@@ -50,5 +49,4 @@
         <param name="publish_image" value="$(arg publish_image)" />
         <param name="output_image_topic" value="$(arg output_image_topic)" />
     </node>
-
 </launch>
