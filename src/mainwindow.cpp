@@ -47,15 +47,26 @@ void SIYI_ROS_SDK::yoloImageCallback(const sensor_msgs::Image::ConstPtr& msg) {
 void SIYI_ROS_SDK::yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr& msg) {
     // Clear the previous bounding boxes
     yolo_boxes.clear();
+    yolo_boxes_q = "YOLO activated! detection result:\n";
 
     // Iterate through the received bounding boxes and add them to the vector
     for (const auto& box : msg->bounding_boxes) {
         yolo_boxes.push_back(box);
+
+        yolo_boxes_q.append(QString::fromStdString(box.Class) + " " + QString::number(box.probability) + "\n");
     }
+
+    if(yolo_boxes.empty()){
+        yolo_boxes_q.append("no object detected\n");
+    }
+
+    ui->yoloPannel->setText(yolo_boxes_q);
 }
 
 // 保存无人机当前里程计信息，包括位置、速度和姿态
 void SIYI_ROS_SDK::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
+    odom_info.clear();
+
     odom_pos_ << msg->pose.pose.position.x,
             msg->pose.pose.position.y,
             msg->pose.pose.position.z;
@@ -76,21 +87,18 @@ void SIYI_ROS_SDK::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
     );
 
     tf::Matrix3x3(odom_q_).getRPY(odom_roll_, odom_pitch_, odom_yaw_);
+
+    odom_info << "X: " << odom_pos_[0] << " m\n" <<
+              "Y: " << odom_pos_[1] << " m\n" <<
+              "Z: " << odom_pos_[2] << " m\n" <<
+              "yaw: " << odom_yaw_ * 180 / M_PI << " deg\n";
+//    odom_info_q = QString::fromStdString(odom_info.str());
+
+    ui->odomPannel->setText(odom_info);
 }
 
 // Store the current frame
 void SIYI_ROS_SDK::saveFrame() {
-    if(odom_pos_[0] * odom_pos_[1] * odom_pos_[2] * odom_yaw_ == 0.0){
-        odom_info << "odometry unavailable";
-    }
-    else {
-        odom_info << fixed << setprecision(2);
-        odom_info << " X: " << odom_pos_[0] <<
-                    " Y: " << odom_pos_[1] <<
-                    " Z: " << odom_pos_[2] <<
-                    " yaw: " << odom_yaw_ * 180 / M_PI;
-    }
-
     // Generate a filename based on the current date and time
     QString currentTime = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
     QString file = currentTime + ".png";
@@ -102,7 +110,7 @@ void SIYI_ROS_SDK::saveFrame() {
         cv::cvtColor(image_yolo_mat, image_save_mat, cv::COLOR_RGB2BGR);
     }
     else{
-        cv::cvtColor(image_raw_mat, image_save_mat, cv::COLOR_RGB2BGR);
+        image_save_mat = image_raw_mat.clone();
     }
 
     cv::putText(image_save_mat,
@@ -117,7 +125,6 @@ void SIYI_ROS_SDK::saveFrame() {
 
     ROS_INFO("frame MANNUALly saved to %s", fullPath.toStdString().c_str());
 }
-
 
 SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::SIYI_ROS_SDK), timer(new QTimer(this)) {
@@ -149,11 +156,15 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     // Open video stream
     cap.open(video_resource);
     if (!cap.isOpened()) {
-        QMessageBox::critical(this, "Error", QString("Could not open video stream: %1").arg(QString::fromStdString(video_resource)));
+        QMessageBox::critical(this,
+                              "Error",
+                              QString("Could not open video stream: %1").arg(QString::fromStdString(video_resource)));
+
         return;
     }
-
     ROS_INFO("video stream connected!");
+
+    odom_info << fixed << setprecision(2);
 
     // Ensure the directory exists
     save_path_Q = QDir::homePath() + save_path.c_str();
@@ -165,7 +176,14 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     ui->setupUi(this);
 
     connect(timer, &QTimer::timeout, this, &SIYI_ROS_SDK::updateFrame);
-    connect(ui->saveButton, &QPushButton::clicked, this, &SIYI_ROS_SDK::saveFrame);
+
+    odom_info_q = "odom unavailable\n";
+    ui->odomPannel->setText(odom_info_q);
+
+    yolo_boxes_q = "YOLO unavailable\n";
+    ui->yoloPannel->setText(yolo_boxes_q);
+
+    connect(ui->saveBtn, &QPushButton::clicked, this, &SIYI_ROS_SDK::saveFrame);
 
     // Update every 30 ms
     timer->start(30);

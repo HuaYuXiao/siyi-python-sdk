@@ -48,6 +48,7 @@ private slots:
 private:
     std::string video_resource;
     cv::VideoCapture cap;
+    QString video_info_q;
     // Store the current frame
     cv::Mat image_raw_mat;
     sensor_msgs::ImagePtr image_raw_msg;
@@ -60,6 +61,7 @@ private:
     // NOTE: avoid using "detection_msgs::BoundingBox yolo_boxes[]"
     // because it is not allowed to define an array with flexible size but not at the end of the class.
     std::vector<detection_msgs::BoundingBox> yolo_boxes;
+    QString yolo_boxes_q;
 
     cv::Mat image_display_mat;
     QImage img_display_q;
@@ -67,10 +69,11 @@ private:
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;
     double odom_roll_, odom_pitch_, odom_yaw_;
     ros::Subscriber odom_sub;
-
-    cv::Mat image_save_mat;
     // Overlay text with position information
     std::stringstream odom_info;
+    QString odom_info_q;
+
+    cv::Mat image_save_mat;
     std::string save_path;
     QDir save_path_Q;
 
