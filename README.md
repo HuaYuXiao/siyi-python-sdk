@@ -6,7 +6,7 @@ SIYI ROS SDK for communication with A8 Mini cameras
 ![ros](https://img.shields.io/badge/ROS-noetic-22314E?logo=ros)
 ![ros](https://img.shields.io/badge/OpenCV-4.2.0-5C3EE8?logo=opencv)
 ![qt](https://img.shields.io/badge/Qt-5.12.8-41CD52?logo=qt)
-![cplusplus](https://img.shields.io/badge/C%2B%2B-14-00599C?logo=cplusplus)
+![cplusplus](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus)
 ![python](https://img.shields.io/badge/Python-3.8.10-3776AB?logo=python)
 ![ubuntu](https://img.shields.io/badge/Ubuntu-20.04.6-E95420?logo=ubuntu)
 
