@@ -2,7 +2,64 @@
 #include "ui_mainwindow.h"
 
 using namespace std;
+using namespace filesystem;
 
+
+void SIYI_ROS_SDK::makeDir(std::string& save_path) {
+    string test_cmd = "test -d ~/" + save_path + "exp0/";
+
+    if(std::system(test_cmd.c_str())){
+        save_path += "exp0/";
+        save_path_q = QDir::homePath() + QString::fromStdString("/" + save_path);
+
+        string mkdir_cmd = "mkdir -p ~/" + save_path;
+        if(!std::system(mkdir_cmd.c_str())){
+            ROS_INFO("dir ~/%s not exist, mkdir", save_path.c_str());
+
+            return;
+        }
+        else{
+            ROS_ERROR("fail to mkdir ~/%s", save_path.c_str());
+        }
+    }
+    else{
+        ROS_INFO("dir ~/%s already exist", save_path.c_str());
+
+        // Get all directories starting with "exp"
+        vector<int> exp_indexes;
+
+        for (const directory_entry& entry : directory_iterator(save_path_fs)) {
+            const string& filename = entry.path().filename().string();
+
+            if (!std::filesystem::is_directory(entry)) {
+                ROS_WARN("file %s is not a directory", filename.c_str());
+            }
+            else if(filename.size() <= 3) {
+                ROS_WARN("file %s is not a valid directory", filename.c_str());
+            }
+            else if(filename.substr(0, 3) == "exp"){
+                int index_int = stoi(filename.substr(3));
+                exp_indexes.push_back(index_int);
+            }
+        }
+
+        // find newest number
+        int last_exp = *max_element(exp_indexes.begin(), exp_indexes.end());
+
+        // Create a new dir with las_exp+1
+        save_path += "exp" + to_string(last_exp + 1) + "/";
+        save_path_q = QDir::homePath() + QString::fromStdString("/" + save_path);
+
+        string mkdir_cmd = "mkdir -p ~/" + save_path;
+
+        if(!std::system(mkdir_cmd.c_str())){
+            ROS_INFO("dir %s not exist, mkdir", save_path.c_str());
+        }
+        else{
+            ROS_ERROR("fail to mkdir: %s", save_path.c_str());
+        }
+    }
+}
 
 void SIYI_ROS_SDK::updateFrame() {
     if (cap.read(image_raw_mat)) {
@@ -92,18 +149,18 @@ void SIYI_ROS_SDK::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
               "Y: " << odom_pos_[1] << " m\n" <<
               "Z: " << odom_pos_[2] << " m\n" <<
               "yaw: " << odom_yaw_ * 180 / M_PI << " deg\n";
-//    odom_info_q = QString::fromStdString(odom_info.str());
+    odom_info_q = QString::fromStdString(odom_info.str());
 
-    ui->odomPannel->setText(odom_info);
+    ui->odomPannel->setText(odom_info_q);
 }
 
 // Store the current frame
 void SIYI_ROS_SDK::saveFrame() {
     // Generate a filename based on the current date and time
-    QString currentTime = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
-    QString file = currentTime + ".png";
-    QFileInfo fi(save_path_Q, file);
-    QString fullPath = fi.absoluteFilePath();
+    QString current_time_q = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+    QString full_name_q = current_time_q + ".png";
+    QFileInfo file_info_q(save_path_q, full_name_q);
+    QString full_path_q = file_info_q.absoluteFilePath();
 
     // Save the frame as an image
     if(!yolo_boxes.empty()) {
@@ -121,9 +178,9 @@ void SIYI_ROS_SDK::saveFrame() {
                 cv::Scalar(255, 255, 255),
                 2);
 
-    cv::imwrite(fullPath.toStdString(), image_save_mat);
+    cv::imwrite(full_path_q.toStdString(), image_save_mat);
 
-    ROS_INFO("frame MANNUALly saved to %s", fullPath.toStdString().c_str());
+    ROS_INFO("frame MANNUALly saved to %s", full_path_q.toStdString().c_str());
 }
 
 SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
@@ -166,12 +223,10 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
 
     odom_info << fixed << setprecision(2);
 
+    // Expand the tilde (~) to the user's home directory
+    save_path_fs = std::filesystem::path(std::getenv("HOME")) / save_path;
     // Ensure the directory exists
-    save_path_Q = QDir::homePath() + save_path.c_str();
-    // Create the directory if it does not exist
-    if (!save_path_Q.exists()) {
-        save_path_Q.mkpath(".");
-    }
+    makeDir(save_path);
 
     ui->setupUi(this);
 

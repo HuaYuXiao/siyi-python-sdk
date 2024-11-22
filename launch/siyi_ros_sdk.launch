@@ -5,7 +5,7 @@
     <arg name="camera_info_topic" default="camera_info" />
     <arg name="image_yolo_topic" default="/yolov5/image_out" />
     <arg name="yolo_box_topic" default="/yolov5/detections" />
-    <arg name="save_path" default="/easondrone_ws/vision/siyi-ros-sdk/img/" />
+    <arg name="save_path" default="easondrone_ws/vision/siyi-ros-sdk/runs/" />
 
     <!-- NOTE: only one of these two params can be set to true! -->
     <arg name="if_hdmi" default="true"/>
