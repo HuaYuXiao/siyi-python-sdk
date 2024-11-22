@@ -44,12 +44,18 @@ class SIYI_ROS_SDK : public QMainWindow {
     Q_OBJECT
 
 public:
+    enum class saveType {
+        SURE,
+        MANUAL,
+        DUBIOUS
+    };
+
     SIYI_ROS_SDK(QWidget *parent = nullptr);
     inline ~SIYI_ROS_SDK(){ delete ui; };
 
 private slots:
     void updateFrame();
-    void saveFrame();
+    void saveFrameBtn();
 
 private:
     std::string video_resource;
@@ -81,8 +87,9 @@ private:
 
     cv::Mat image_save_mat;
     std::string save_path;
-    QDir save_path_q;
+    QString save_path_q;
     std::filesystem::path save_path_fs;
+    QDir save_path_type_q;
 
     Ui::SIYI_ROS_SDK *ui;
     QTimer *timer;
@@ -91,6 +98,7 @@ private:
     void yoloImageCallback(const sensor_msgs::Image::ConstPtr&);
     void yoloBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr&);
     void odometryCallback(const nav_msgs::Odometry::ConstPtr&);
+    void saveFrame(const saveType);
 };
 
 #endif // MAINWINDOW_H

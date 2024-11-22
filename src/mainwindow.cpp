@@ -10,13 +10,10 @@ void SIYI_ROS_SDK::makeDir(std::string& save_path) {
 
     if(std::system(test_cmd.c_str())){
         save_path += "exp0/";
-        save_path_q = QDir::homePath() + QString::fromStdString("/" + save_path);
 
         string mkdir_cmd = "mkdir -p ~/" + save_path;
         if(!std::system(mkdir_cmd.c_str())){
             ROS_INFO("dir ~/%s not exist, mkdir", save_path.c_str());
-
-            return;
         }
         else{
             ROS_ERROR("fail to mkdir ~/%s", save_path.c_str());
@@ -48,7 +45,6 @@ void SIYI_ROS_SDK::makeDir(std::string& save_path) {
 
         // Create a new dir with las_exp+1
         save_path += "exp" + to_string(last_exp + 1) + "/";
-        save_path_q = QDir::homePath() + QString::fromStdString("/" + save_path);
 
         string mkdir_cmd = "mkdir -p ~/" + save_path;
 
@@ -57,6 +53,22 @@ void SIYI_ROS_SDK::makeDir(std::string& save_path) {
         }
         else{
             ROS_ERROR("fail to mkdir: %s", save_path.c_str());
+        }
+    }
+
+    save_path_q = QDir::homePath() + QString::fromStdString("/" + save_path);
+
+    string save_path_sure = save_path + "sure/";
+    string save_path_dubious = save_path + "dubious/";
+    string save_path_manual = save_path + "manual/";
+
+    for(string path : {save_path_manual, save_path_sure, save_path_dubious}){
+        string mkdir_cmd = "mkdir -p ~/" + path;
+        if(!std::system(mkdir_cmd.c_str())){
+            ROS_INFO("dir ~/%s not exist, mkdir", path.c_str());
+        }
+        else{
+            ROS_ERROR("fail to mkdir ~/%s", path.c_str());
         }
     }
 }
@@ -98,6 +110,15 @@ void SIYI_ROS_SDK::yoloImageCallback(const sensor_msgs::Image::ConstPtr& msg) {
 
         // Now you have the image as a cv::Mat object
         image_yolo_mat = cv_ptr->image;
+
+        for (const auto& box : yolo_boxes) {
+            if(box.probability > 0.75){
+                saveFrame(saveType::SURE);
+            }
+            else{
+                saveFrame(saveType::DUBIOUS);
+            }
+        }
     }
 }
 
@@ -155,11 +176,28 @@ void SIYI_ROS_SDK::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
 }
 
 // Store the current frame
-void SIYI_ROS_SDK::saveFrame() {
+void SIYI_ROS_SDK::saveFrameBtn() {
+    saveFrame(saveType::MANUAL);
+}
+
+void SIYI_ROS_SDK::saveFrame(const saveType save_type){
+    switch(save_type){
+        case saveType::SURE:
+            save_path_type_q = save_path_q + QString::fromStdString("sure/");
+            break;
+        case saveType::DUBIOUS:
+            save_path_type_q = save_path_q + QString::fromStdString("dubious/");
+            break;
+        case saveType::MANUAL:
+            save_path_type_q = save_path_q + QString::fromStdString("manual/");
+            break;
+    }
+
     // Generate a filename based on the current date and time
     QString current_time_q = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
     QString full_name_q = current_time_q + ".png";
-    QFileInfo file_info_q(save_path_q, full_name_q);
+
+    QFileInfo file_info_q(save_path_type_q, full_name_q);
     QString full_path_q = file_info_q.absoluteFilePath();
 
     // Save the frame as an image
@@ -180,7 +218,7 @@ void SIYI_ROS_SDK::saveFrame() {
 
     cv::imwrite(full_path_q.toStdString(), image_save_mat);
 
-    ROS_INFO("frame MANNUALly saved to %s", full_path_q.toStdString().c_str());
+    ROS_INFO("frame saved to %s", full_path_q.toStdString().c_str());
 }
 
 SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
@@ -238,7 +276,7 @@ SIYI_ROS_SDK::SIYI_ROS_SDK(QWidget *parent)
     yolo_boxes_q = "YOLO unavailable\n";
     ui->yoloPannel->setText(yolo_boxes_q);
 
-    connect(ui->saveBtn, &QPushButton::clicked, this, &SIYI_ROS_SDK::saveFrame);
+    connect(ui->saveBtn, &QPushButton::clicked, this, &SIYI_ROS_SDK::saveFrameBtn);
 
     // Update every 30 ms
     timer->start(30);

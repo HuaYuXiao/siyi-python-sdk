@@ -2,7 +2,7 @@
     <!-- Detection configuration -->
     <arg name="weights" default="$(find yolov5_ros)/yolov5s-cuadc-382.pt" />
     <arg name="data" default="$(find yolov5_ros)/config/cuadc.yaml" />
-    <arg name="confidence_threshold" default="0.75" />
+    <arg name="confidence_threshold" default="0.5" />
     <arg name="iou_threshold" default="0.45" />
     <arg name="maximum_detections" default="100" />
     <arg name="device" default="cpu" />
