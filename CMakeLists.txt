@@ -18,6 +18,8 @@ find_package(Qt5 REQUIRED COMPONENTS
 		Gui
 		Widgets
 )
+
+set(CMAKE_PREFIX_PATH "${CMAKE_MODULE_PATH};/opt/ros/noetic;/home/hyx020222/easondrone_ws/devel")
 find_package(catkin REQUIRED COMPONENTS
        roscpp
        rospy

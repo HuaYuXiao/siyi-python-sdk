@@ -1,6 +1,6 @@
 # siyi-ros-sdk
 
-SIYI ROS SDK for communication with A8 Mini cameras
+SIYI-ROS-SDK for interface with A8 Mini camera
 
 ![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FHuaYuXiao%2Fsiyi-ros-sdk.json%3Fcolor%3Dpink)
 ![ros](https://img.shields.io/badge/ROS-noetic-22314E?logo=ros)
@@ -12,14 +12,12 @@ SIYI ROS SDK for communication with A8 Mini cameras
 
 Camera webpage: https://siyi.biz/en/index.php?id=22
 
-
 ## Features
 
-- publish video stream to **ROS topic**, either **RTSP** or **HDMI** supported
+- publish video stream to **ROS topic**, **RTSP** or **HDMI** supported
 - a panel to display video stream, and save frame **with Odometry info**
-- combined with **YOLOv5** if launched
-- tools to control gimbal angles
-
+- interface with **YOLOv5** if launched
+- tool to control gimbal angles
 
 ## Setup
 
@@ -29,8 +27,8 @@ If stream video with **RTSP**,
 
 * Connect the camera to PC or onboard computer using the ethernet cable that comes with it. The current implementation uses UDP communication.
 * Do the PC wired network configuration. Make sure to assign a manual IP address to your computer
-  * For example, IP `192.168.2.99`
-  * Gateway `192.168.2.1`
+  * For example, IP `192.168.144.30`
+  * Gateway `192.168.144.1`
   * Netmask `255.255.255.0`
 
 ### Requirements
@@ -47,7 +45,6 @@ If stream video with **RTSP**,
 git clone https://github.com/HuaYuXiao/siyi-ros-sdk.git ~/easondrone_ws/vision/siyi-ros-sdk
 cd ~/easondrone_ws && catkin_make --source vision/siyi-ros-sdk --build vision/siyi-ros-sdk/build
 ```
-
 
 ## Usage
 
